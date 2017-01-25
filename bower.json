@@ -1,0 +1,27 @@
+{
+  "name": "emmah-assignment1-comp3025",
+  "description": "Assignment 1 Calculator Web App",
+  "main": "index.js",
+  "authors": [
+    "Emma Hilborn"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "calculator",
+    "web",
+    "app"
+  ],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "Scripts/lib",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "2.1.4",
+    "jquery-mobile-bower": "^1.4.5"
+  }
+}

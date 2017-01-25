@@ -1,0 +1,16 @@
+{
+  "name": "emmah-assignment1-comp3025",
+  "version": "1.0.0",
+  "description": "Assignment 1 Calculator Web App",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "calculator",
+    "web",
+    "app"
+  ],
+  "author": "Emma Hilborn",
+  "license": "ISC"
+}
