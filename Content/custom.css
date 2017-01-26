@@ -1,3 +1,24 @@
+.ui-content{
+    width: 320px;
+    margin: 0 auto;
+}
+
 #calcDisplay {
     text-align: right;
+}
+
+.ui-btn {
+    height: 47px !important;
+}
+
+.btn-sm {
+    width: 47px !important;
+}
+
+.btn-md {
+    width: 127px !important;
+}
+
+.btn-lg {
+    width: 207px !important;
 }
