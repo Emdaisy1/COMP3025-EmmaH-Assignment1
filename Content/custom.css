@@ -1,3 +1,10 @@
+/**
+    File: custom.css
+    Author: Emma Hilborn (200282755)
+    Date: Jan 31, 2017
+    App description: A basic calculator web app done with JQuery Mobile & JavaScript
+*/
+
 .ui-content{
     width: 320px;
     margin: 0 auto;

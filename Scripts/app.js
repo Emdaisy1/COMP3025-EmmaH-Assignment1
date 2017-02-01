@@ -1,3 +1,10 @@
+/**
+    File: app.js
+    Author: Emma Hilborn (200282755)
+    Date: Jan 31, 2017
+    App description: A basic calculator web app done with JQuery Mobile & JavaScript
+*/
+
 $(document).ready(function() {
 
     //Set up variables
@@ -10,7 +17,11 @@ $(document).ready(function() {
     var eqClicked;
     var $currentDisplay = $('#calcDisplay');
 
-    //Set up reset function for Clear button
+    /**
+     * Clears the calculator
+     * @param none
+     * @return none
+     */
     function resetCalc() {
         numOne = '';
         numTwo = '';
@@ -23,38 +34,51 @@ $(document).ready(function() {
         $( '.ui-btn' ).prop('disabled', false);
     }
 
-    //Set up calulation function
+    /**
+     * Calculates the current answer
+     * @param none
+     * @return none
+     */
     function calculate() {
         
-        //Parse num vars to floats
+        //Parse number variables to floats
         numOne = parseFloat(numOne);
         numTwo = parseFloat(numTwo);
 
         //Determine calculation to run via ID of operator
-        if( op == 'add' ){
+        if( op == 'add' ) {
             numOne = numOne + numTwo;
         }
-        else if( op == 'subtract' ){
+        else if( op == 'subtract' ) {
             numOne = numOne - numTwo;
         }
-        else if( op == 'multiply' ){
+        else if( op == 'multiply' ) {
             numOne = numOne * numTwo;
         }
         else {
-            if(numTwo == 0){
+            //Throw error and ask to be reset if attempt to divide by 0
+            if( numTwo == 0 ) {
                 $( '.ui-btn' ).prop('disabled', true);
                 $( '.clear' ).prop('disabled', false);
                 $currentDisplay.val('Cannot divide by 0. Please clear calculator.');
             }
+            //If not diving by 0, run calculation
             else{
                 numOne = numOne / numTwo;
             }
         }
 
-        if(numOne.length > 18){
-            numOne = parseFloat(numOne).toFixed(15);
+        //If the display for the number is too long, set the display to be cut off at 15 decimal points
+        if( numOne.length > 18 ) {
+            numOneDisplay = parseFloat(numOne).toFixed(15);
         }
-        $currentDisplay.val(numOne);
+        //Else, display normally
+        else{
+            numOneDisplay = numOne;
+        }
+        //Update the display
+        $currentDisplay.val(numOneDisplay);
+        //Set calculator so that it knows a calculation just occured and no operator has been chosen yet
         postCalc = true;
         opClicked = false;
 
@@ -63,20 +87,26 @@ $(document).ready(function() {
     //"Reset" calculator on start
     resetCalc();
 
-    //Behaviour for handling number & decimal buttons
+    /**
+     * Handles behaviour for number and decimal buttons
+     * @param .number class button clicked
+     * @return none
+     */
     $( '.number' ).click( function() {
-        
+
+        //If no operator has been chosen and = was just clicked, assume user is starting new calculation        
         if( !opClicked && eqClicked ) {
             numOne = '';
             numTwo = '';
             op = '';
             eqClicked = false;
         }
-        
+        //If an operator has been chosen, and a calculation was run, reset num 2 to work with
         if( opClicked && postCalc ) {
             numTwo = '';
         }
 
+        //Revert postCalc to false as a calculation was no longer the last thing run
         postCalc = false;
         //If an operator has been clicked but number 1 has not been set, then set it as number two
         if( op !== '' && numOne === '' ) {
@@ -85,13 +115,13 @@ $(document).ready(function() {
             if( this.id == '.' && numTwo.indexOf('.') > -1 ) {
                 //Do nothing
             }
-            //Else, append the number
+            //Else, append the number/decimal point
             else{
                 numTwo = numTwo + this.id;
                 $currentDisplay.val(numTwo);
             }
         }
-        //If an operator has been clicked, and number 1 is not null/has been set, then set it as number two
+        //If an operator has been clicked, and number 1 has been set, then set it as number two
         else if( op !== '' && numOne !== '' ) {
             if( this.id == '.' && numTwo.indexOf('.') > -1 ) {
                 
@@ -113,7 +143,11 @@ $(document).ready(function() {
         }
     });
 
-    //Behaviour for handling operator buttons
+    /**
+     * Handles behaviour for operator buttons
+     * @param .operator class button clicked
+     * @return none
+     */
     $( '.operator' ).click( function() {
         opClicked = true;
         //If no past operator (e.g. after reset) set this as operator
@@ -136,18 +170,32 @@ $(document).ready(function() {
 
     });
 
-    //Behaviour for handling equals button
+    /**
+     * Handles behaviour for equals button
+     * @param .equals class button clicked
+     * @return none
+     */
     $( '.equals' ).click( function() {
         
         //So long as all 3 values exist, run the calculation
-        if(numOne !== '' && numTwo !== '' && op !== ''){
+        if( numOne !== '' && numTwo !== '' && op !== '' ) {
+            calculate();
+            eqClicked = true;
+        }
+        //If num 1 (previous answer) & op exist, but no num 2, assign num 2 to 1 and run calculation on itself
+        else if( op !== '' && numTwo == '' ) {
+            numTwo = numOne;
             calculate();
             eqClicked = true;
         }
 
     });
 
-    //Behaviour for handling clear button
+    /**
+     * Handles behaviour for clear button
+     * @param .clear class button clicked
+     * @return none
+     */
     $( '.clear' ).click( function() {
 
         //Reset the calulator
