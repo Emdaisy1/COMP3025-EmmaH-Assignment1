@@ -4,8 +4,10 @@ $(document).ready(function() {
     var numOne;
     var numTwo;
     var op;
-    var numOneSet = false;
-    var postCalc = false;
+    var numOneSet;
+    var postCalc;
+    var opClicked;
+    var eqClicked;
     var $currentDisplay = $('#calcDisplay');
 
     //Set up reset function for Clear button
@@ -15,7 +17,10 @@ $(document).ready(function() {
         op = '';
         numOneSet = false;
         postCalc = false;
+        opClicked = false;
+        eqClicked = false;
         $currentDisplay.val('0');
+        $( '.ui-btn' ).prop('disabled', false);
     }
 
     //Set up calulation function
@@ -24,8 +29,8 @@ $(document).ready(function() {
         //Parse num vars to floats
         numOne = parseFloat(numOne);
         numTwo = parseFloat(numTwo);
-        console.log("Calc " + op + " for 1: " + numOne + " 2: " + numTwo);
 
+        //Determine calculation to run via ID of operator
         if( op == 'add' ){
             numOne = numOne + numTwo;
         }
@@ -36,7 +41,14 @@ $(document).ready(function() {
             numOne = numOne * numTwo;
         }
         else {
-            numOne = numOne / numTwo;
+            if(numTwo == 0){
+                $( '.ui-btn' ).prop('disabled', true);
+                $( '.clear' ).prop('disabled', false);
+                $currentDisplay.val('Cannot divide by 0. Please clear calculator.');
+            }
+            else{
+                numOne = numOne / numTwo;
+            }
         }
 
         if(numOne.length > 18){
@@ -44,6 +56,8 @@ $(document).ready(function() {
         }
         $currentDisplay.val(numOne);
         postCalc = true;
+        opClicked = false;
+
     }
 
     //"Reset" calculator on start
@@ -51,49 +65,75 @@ $(document).ready(function() {
 
     //Behaviour for handling number & decimal buttons
     $( '.number' ).click( function() {
-        if(postCalc){
+        
+        if( !opClicked && eqClicked ) {
+            numOne = '';
             numTwo = '';
-            postCalc = false;
+            op = '';
+            eqClicked = false;
         }
-        var addToNum = this.id;
-        console.log(op + ' ' + numOne + ' ' + numTwo);
+        
+        if( opClicked && postCalc ) {
+            numTwo = '';
+        }
+
+        postCalc = false;
         //If an operator has been clicked but number 1 has not been set, then set it as number two
         if( op !== '' && numOne === '' ) {
             numOne = '0';
-            numTwo = numTwo + addToNum;
-            console.log( 'op with no num 1 - 1: ' + numOne + ' 2: ' + numTwo);
-            $currentDisplay.val(numTwo);
+            //If they tried to add a decimal and one already exists, do nothing
+            if( this.id == '.' && numTwo.indexOf('.') > -1 ) {
+                //Do nothing
+            }
+            //Else, append the number
+            else{
+                numTwo = numTwo + this.id;
+                $currentDisplay.val(numTwo);
+            }
         }
         //If an operator has been clicked, and number 1 is not null/has been set, then set it as number two
         else if( op !== '' && numOne !== '' ) {
-            numTwo = numTwo + this.id;
-            console.log( 'op with num 1 - 1: ' + numOne + ' 2: ' + numTwo);
-            $currentDisplay.val(numTwo);
+            if( this.id == '.' && numTwo.indexOf('.') > -1 ) {
+                
+            }
+            else{
+                numTwo = numTwo + this.id;
+                $currentDisplay.val(numTwo);
+            }
         }
         //If neither of the above, set the number to number one
         else {
-            numOne = numOne + this.id;
-            console.log( 'no op no num 1 - 1: ' + numOne + ' 2: ' + numTwo);
-            $currentDisplay.val(numOne);
+            if( this.id == '.' && numOne.indexOf('.') > -1 ) {
+                
+            }
+            else{
+                numOne = numOne + this.id;
+                $currentDisplay.val(numOne);
+            }
         }
     });
 
     //Behaviour for handling operator buttons
     $( '.operator' ).click( function() {
+        opClicked = true;
         //If no past operator (e.g. after reset) set this as operator
         if( op === '' ) {
             op = this.id;
         }
         //Else if there's an operator but a calculation was just done, set to new operator and set numTwo to numOne to do operation on itself
-        else if( op !== '' && postCalc){
+        else if( op !== '' && eqClicked){
             op = this.id;
             numTwo = numOne;
+            eqClicked = false;
         }
         //Else, calculate the previous equation then set this as the operator for next time
         else{
             calculate();
             op = this.id;
+            numTwo = '';
+            eqClicked = false;
         }
+
     });
 
     //Behaviour for handling equals button
@@ -102,6 +142,7 @@ $(document).ready(function() {
         //So long as all 3 values exist, run the calculation
         if(numOne !== '' && numTwo !== '' && op !== ''){
             calculate();
+            eqClicked = true;
         }
 
     });
