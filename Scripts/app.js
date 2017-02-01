@@ -15,6 +15,7 @@ $(document).ready(function() {
     var postCalc;
     var opClicked;
     var eqClicked;
+    var error;
     var $currentDisplay = $('#calcDisplay');
 
     /**
@@ -30,6 +31,7 @@ $(document).ready(function() {
         postCalc = false;
         opClicked = false;
         eqClicked = false;
+        error = false;
         $currentDisplay.val('0');
         $( '.ui-btn' ).prop('disabled', false);
     }
@@ -58,9 +60,7 @@ $(document).ready(function() {
         else {
             //Throw error and ask to be reset if attempt to divide by 0
             if( numTwo == 0 ) {
-                $( '.ui-btn' ).prop('disabled', true);
-                $( '.clear' ).prop('disabled', false);
-                $currentDisplay.val('Cannot divide by 0. Please clear calculator.');
+                error = true;
             }
             //If not diving by 0, run calculation
             else{
@@ -68,19 +68,28 @@ $(document).ready(function() {
             }
         }
 
-        //If the display for the number is too long, set the display to be cut off at 15 decimal points
-        if( numOne.length > 18 ) {
-            numOneDisplay = parseFloat(numOne).toFixed(15);
+        //If there was a divide by 0 error inform user and prompt to reset
+        if( error == true ) {
+            $currentDisplay.val('Cannot divide by 0. Please clear calculator.');
+            $( '.ui-btn' ).prop('disabled', true);
+            $( '.clear' ).prop('disabled', false);
         }
-        //Else, display normally
-        else{
-            numOneDisplay = numOne;
+        //Else move on to update display
+        else {
+            //If the display for the number is too long, set the display to be cut off at 15 decimal points
+            if( numOne.length > 18 ) {
+                numOneDisplay = parseFloat(numOne).toFixed(15);
+            }
+            //Else, display normally
+            else{
+                numOneDisplay = numOne;
+            }
+            //Update the display
+            $currentDisplay.val(numOneDisplay);
+            //Set calculator so that it knows a calculation just occured and no operator has been chosen yet
+            postCalc = true;
+            opClicked = false;
         }
-        //Update the display
-        $currentDisplay.val(numOneDisplay);
-        //Set calculator so that it knows a calculation just occured and no operator has been chosen yet
-        postCalc = true;
-        opClicked = false;
 
     }
 
